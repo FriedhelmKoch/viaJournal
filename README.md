@@ -1,2 +1,0 @@
-# viaJournal
-Bordkasse
