@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<!--
+ Licensed to Friedhelm Koch
+ 
+ <html lang="de" manifest="manifest.php"> -->
+<html lang="de">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="format-detection" content="telephone=no" />
+
+		<!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+		<meta name="viewport" content="width=device-width, height=device-height, minimal-ui user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, target-densitydpi=device-dpi" />
+		<!-- Launcher Title -->
+		<meta name="apple-mobile-web-app-title" content="viaJournal" />
+
+		<title>viaJournal</title>
+		
+		<!-- Ohne Browser URL-Zeile iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<!-- Ohne Browser URL-Zeile Chrome for Android -->
+		<meta name="mobile-web-app-capable" content="yes" />
+		<!-- Kein Bottom Control mehr -->
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<!-- Title that will shown when website is added to Home Screen -->
+		<meta name="apple-mobile-web-app-title" content="viaJournal" />
+
+		<!-- Favicon Icon -->
+		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+		
+		<!-- Launch Icons -->
+		<link rel="apple-touch-icon" href="./img/icon.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="./img/icon-76.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="./img/icon-60_at_2x.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="./img/icon-76_at_2x.png">
+		
+		<!-- Startup Splash (640 x 1136 iPhone 5s/5c) -->
+		<link rel="apple-touch-startup-image" href="./img/Default-568h_at_2x~iphone.png">
+				
+		<!-- jquery.mobile 1.4.3 custom styles and icons -->
+		<link rel="stylesheet" href="./css/jquery.mobile.theme.viaJournal.min.css" />		
+		<link rel="stylesheet" href="./css/jquery.mobile.icons.min.css" />
+		<link rel="stylesheet" href="./css/jquery.mobile.structure.min.css" />
+
+		<!-- MobiScroll 2.12.0 CSS (from GitHub!) -->
+		<link rel="stylesheet" href="./css/mobiscroll.icons.css" />
+		<link rel="stylesheet" href="./css/mobiscroll.widget.css" />
+		<link rel="stylesheet" href="./css/mobiscroll.widget.jqm.css" />
+		<link rel="stylesheet" href="./css/mobiscroll.scroller.css" />
+		<link rel="stylesheet" href="./css/mobiscroll.scroller.jqm.css" />
+		<link rel="stylesheet" href="./css/mobiscroll.animation.css" />
+
+		<!-- viaJournal special -->
+		<link rel="stylesheet" href="./css/viaJournal_ci.css" />
+		
+		<!-- Awesome Icons (http://www.dotcastle.com/blog/font-awesome-icons-for-jquery-mobile) -->
+		<link rel="stylesheet" href="./css/jqm-font-awesome-usvg-upng.min.css" />
+		
+		<!-- Cordova/Phonegap 3.5.0			
+		<script type="text/javascript" src="./js/cordova.min.js"></script>
+		<script type="text/javascript" src="./js/index.js"></script>
+		<script type="text/javascript">
+			app.initialize();
+		</script>
+		-->
+		
+		<!-- jquery 1.10.2 -->
+		<script type="text/javascript" src="./js/jquery.min.js"></script>
+		
+		<!-- jquery.mobile 1.4.3 -->
+		<script type="text/javascript" src="./js/jquery.mobile.min.js"></script>
+		
+		<!-- MobiScroll 2.12.0 JS (from GitHub!) -->
+		<script type="text/javascript" src="./js/mobiscroll.core.js"></script>
+		<script type="text/javascript" src="./js/mobiscroll.widget.js"></script>
+		<script type="text/javascript" src="./js/mobiscroll.scroller.js"></script>
+		<script type="text/javascript" src="./js/mobiscroll.datetime.js"></script>
+		<script type="text/javascript" src="./js/mobiscroll.widget.jqm.js"></script>
+		<script type="text/javascript" src="./js/mobiscroll.i18n.de.js"></script>
+				
+		<!-- localstorage 2.3 -->	
+		<script type="text/javascript" src="./js/localstoragedb.min.js"></script>
+				
+		<!-- viaJournal individual Scripts -->
+		<script type="text/javascript" src="./js/scripts.min.js"></script>
+		<script type="text/javascript" src="./js/viaJournal.min.js"></script>
+		<script type="text/javascript" src="./js/md5.min.js"></script>
+
+					
+
+		<script type="text/javascript">
+
+			///////////
+			// Standard Javascript Funktionen
+			////////////////////////////////////////////	
+	
+			// Globale Variablen
+			var viaJournalDB_085,		// Datenbank in der Version 0.8.5
+				recKurse;							// Hier werden Datenbankrecords gespeichert
+		
+			///////////
+			// Erst wenn DOM geladen
+			////////////////////////////////////////////		
+			
+			$(document).ready(function() {
+
+				// __________ Globale Variablen
+				//
+
+				iOSversion();					// Header für iOS7 anpassen
+				openDB();							// Initialisierte Datenbank öffnen
+				showKurse();					// Alle gespeicherten Konten: Personen in Listview anzeigen 
+
+				// _________ Wechslkurse editieren: Löschen / Speichern
+				//				
+				$('.linkKurseDetail').bind('click', function() {
+					editKurseDetail($(this).attr('rec'));				// Laufvariable aus "rec" auslesen
+				});
+				
+				// _________ Löschen von gespeicherten Wechselkursen aus der Datenbank
+				//
+				$('.delKurse').bind('click', function() {
+					deleteKurse($('#KurseDetailPage').attr('rec'));	// Hinterlegte Recod# einlesen
+				});
+				
+				// _________ Speichern/Update von Wechselkursen in die Datenbank
+				//
+				$('.saveKurse').bind('click', function() {
+					saveKurse($('#KurseDetailPage').attr('rec'));
+				});
+				
+				// _________ Anlegen von neuen Wechselkursen in die Datenbank
+				//
+				$('.addKurse').bind('click', function() {
+					addKurse();
+				});			
+				
+	
+				return false;
+			});
+
+		</script>
+				
+	</head>
+		
+	<body>
+	
+		<div data-role="page" id="KursePage">
+		
+			<div data-role="header" data-position="fixed" data-theme="a" style="opacity:0.9;">
+				<a href="./index.html" rel="external" class="iOS7Header ui-btn-left ui-corner-all" data-transition="slide" data-icon="arrow-l" data-mini="true"><span class="backBtn">Zurück</span></a>
+				<h1>Wechselkurse</h1>
+				<a href="./calc.html" rel="external" class="iOS7Header ui-btn ui-corner-all ui-icon-fa-building-o ui-btn-icon-notext" data-transition="slide" data-mini="true"><span class="calcBtn">Calc</span></a>
+			</div>
+			
+			<div role="main" class="ui-content">
+			
+				<ul id="archivKurse" class="auswahl" data-role="listview" data-inset="true" data-theme="c">
+				</ul>
+								
+				<div id="message"></div>
+
+			</div>
+			
+			<div data-role="footer" data-position="fixed" data-theme="b" style="overflow:hidden;opacity:1.0;">
+		    <div data-role="navbar" data-iconpos="left">
+    	    <ul>
+            <li><a href="#" class="addKurse" data-icon="plus">Neu</a></li>
+      	  </ul>
+    		</div><!-- /navbar -->
+			</div>
+			</div>
+			
+		</div><!-- /KtoTransPage -->
+		
+
+		<div data-role="page" id="KurseDetailPage">
+		
+			<div data-role="header" data-position="fixed" data-theme="a" style="opacity:0.9;">
+				<a href="#" class="iOS7Header ui-btn-left ui-corner-all" data-rel="back" data-transition="slide" data-icon="arrow-l" data-mini="true"><span class="backBtn">Zurück</span></a>
+				<h1>Wechselkurse</h1>
+			</div>
+			
+			<div role="main" class="ui-content">
+			
+				<div id="KurseDetail">
+				
+					<div class="ui-corner-all custom-corners">
+					
+						<div class="ui-bar ui-bar-a">
+							<h3>Wechselkurs von:</h3>
+						</div>
+
+						<div class="ui-body ui-body-a">
+							<fieldset class="ui-grid-a">
+								<div class="ui-block-a" style="width:65%">
+									<label for="kursVonBez">Bezeichnung:</label>
+									<input name="kursVonBez" id="kursVonBez" placeholder="Kursname" value="" type="text" maxlength="50" />
+								</div>
+								<div class="ui-block-b" style="width:35%">
+									<label for="kursVon">Kurzzeichen:<sup>*</sup></label>
+									<input name="kursVon" id="kursVon" placeholder="Kurzzeichen" value="" type="text" maxlength="3" />
+								</div>
+							</fieldset>
+						</div>
+						
+					</div>
+					
+					</br>
+					
+					<div class="ui-corner-all custom-corners">
+					
+						<div class="ui-bar ui-bar-a">
+							<h3>Wechselkurs nach:</h3>
+						</div>
+
+						<div class="ui-body ui-body-a">
+							<fieldset class="ui-grid-a">
+								<div class="ui-block-a" style="width:65%">
+									<label for="kursNachBez">Bezeichnung:</label>
+									<input name="kursNachBez" id="kursNachBez" placeholder="Kursname" value="" type="text" maxlength="50" />
+								</div>
+								<div class="ui-block-b" style="width:35%">
+									<label for="kursNach">Kurzzeichen:<sup>*</sup></label>
+									<input name="kursNach" id="kursNach" placeholder="Kurszeichen" value="" type="text" maxlength="3" />
+								</div>
+							</fieldset>
+						</div>
+						
+						</br>
+					
+						<div class="ui-bar ui-bar-a">
+							<h3>Kurs:</h3>
+						</div>
+						
+						<div class="ui-body ui-body-a">
+							<label for="kursWert">Kurs:</label>
+    					<input name="kursWert" id="kursWert" class="currencyWheel" placeholder="Kurs" value="" pattern="[0-9].," type="number" maxlength="50" />
+						</div>
+						
+						<sup><br/>*</sup><span style="font-size:0.8em">(Pflichtfelder müssen ausgefüllt werden und können nachträglich nicht geändert werden!)<br/><br/></span>
+
+					</div>
+																																							
+				</div>
+
+			</div><!-- /main -->
+
+			
+			<!-- popup - Löschen eines Eintrages -->	
+			<div data-role="popup" data-transition="slidedown" data-dismissible="false" data-position-to="window" data-dismissible="true" id="delConfirm" data-theme="a" data-overlay-theme="a">
+				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<!-- header wird ersetzt, da ansonsten der auto back-btn eingesetzt wird -->	
+				<div class="ui-bar ui-bar-a ui-corner-top"> 
+					<center><h3 class="delpopHeader">Eintrag löschen?</h3></center>
+				</div>
+				<div data-role="content" data-theme="d" class="ui-corner-bottom ui-content ui-hide-label" style="padding:10px 20px;">				
+					<h3><center id="delItem"></center></h3>
+					<p><center class="delpopMessage">ACHTUNG: Der Eintrag wird unwiderruflich gelöscht!</br>Beachte, dass ein Journal dadurch falsch berechnet werden kann!</center></p>
+					<a href="#" id="delItemBtn" data-role="button" data-icon="fa-trash-o" data-mini="true" data-theme="c"><span class="delBtn blink">Löschen</span></a>
+				</div>
+			</div><!-- /popup -->
+			
+
+			<!-- popup successfully saved/updated -->
+			<div data-role="popup" data-transition="slidedown" data-dismissible="true" data-position-to="window" id="popupSuccess" data-theme="a" data-overlay-theme="a">
+				<a href="#" id="successCloseBtn" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<p class="popSuccess" style="white-space:normal;"></br>Daten erfolgreich gespeichert!</p>
+			</div><!-- /popup -->
+				
+
+			<!-- popup - Prüfen auf doppelten Eintrag -->	
+			<div data-role="popup" data-transition="slidedown" data-dismissible="true" data-position-to="window" data-dismissible="true" id="doubleCheck" data-theme="a" data-overlay-theme="a">
+				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<!-- header wird ersetzt, da ansonsten der auto back-btn eingesetzt wird -->	
+				<div class="ui-bar ui-bar-a ui-corner-top"> 
+					<center><h3 class="doubleCheckHeader">Doppelter Eintrag!</h3></center>
+				</div>
+				<div data-role="content" data-theme="d" class="ui-corner-bottom ui-content ui-hide-label" style="padding:10px 20px;">				
+					<h3><center id="doubleCheckItem"></center></h3>
+					<p><center class="doubleCheckMessage">Eintrag wird überschrieben!</center></p>
+					<a href="#" id="doubleCheckBtn" data-role="button" data-icon="fa-copy" data-mini="true" data-theme="c"><span class="doubleCheckBtnText blink">Überschreiben</span></a>
+				</div>
+			</div><!-- /popup -->
+			
+	
+			<!-- popup - Eingabe Validierung -->	
+			<div data-role="popup" id="validation" data-dismissible="true" data-position-to="window" data-theme="a" data-overlay-theme="a">
+				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<p class="popValidation" style="white-space:normal;"></br>...Validation error!</p>
+			</div><!-- /popup -->
+			
+																																															
+			<div data-role="footer" data-position="fixed" data-theme="b" style="overflow:hidden;opacity:1.0;">
+		    <div data-role="navbar" class="navbarFooter_modify" data-iconpos="left">
+    	    <ul>
+            <li><a href="#" class="saveKurse"data-icon="fa-save">Speichern</a></li>
+            <li><a href="#" class="delKurse" data-icon="fa-trash-o">Löschen</a></li>
+      	  </ul>
+    		</div><!-- /navbar modify -->
+				<div data-role="navbar" class="navbarFooter_add" data-iconpos="left">
+    	    <ul>
+            <li><a href="#" class="saveKurse"data-icon="fa-save">Speichern</a></li>
+      	  </ul>
+    		</div><!-- /navbar add -->
+			</div>
+			
+		</div><!-- /KtoTransDetailPage -->
+	</body>
+</html>

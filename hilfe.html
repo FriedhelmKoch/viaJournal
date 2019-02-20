@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<!--
+ Licensed to Friedhelm Koch
+ 
+ <html lang="de" manifest="manifest.php"> -->
+<html lang="de">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="format-detection" content="telephone=no" />
+
+		<!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+		<meta name="viewport" content="width=device-width, height=device-height, minimal-ui user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, target-densitydpi=device-dpi" />
+		<!-- Launcher Title -->
+		<meta name="apple-mobile-web-app-title" content="viaJournal">
+
+		<title>viaJournal</title>
+		
+		<!-- Ohne Browser URL-Zeile iOS-->
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<!-- Ohne Browser URL-Zeile Chrome for Android-->
+		<meta name="mobile-web-app-capable" content="yes" />
+		<!-- Kein Bottom Control mehr -->
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<!-- Title that will shown when website is added to Home Screen -->
+		<meta name="apple-mobile-web-app-title" content="viaJournal" />
+
+		<!-- Favicon Icon -->
+		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+		
+		<!-- Launch Icons -->
+		<link rel="apple-touch-icon" href="./img/icon.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="./img/icon-76.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="./img/icon-60_at_2x.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="./img/icon-76_at_2x.png">
+		
+		<!-- Startup Splash (640 x 1136 iPhone 5s/5c) -->
+		<link rel="apple-touch-startup-image" href="./img/Default-568h_at_2x~iphone.png">
+				
+		<!-- jquery.mobile 1.4.3 custom styles and icons -->
+		<link rel="stylesheet" href="./css/jquery.mobile.theme.viaJournal.min.css" />		
+		<link rel="stylesheet" href="./css/jquery.mobile.icons.min.css" />
+		<link rel="stylesheet" href="./css/jquery.mobile.structure.min.css" />
+
+		<!-- MobiScroll 2.12.0 CSS (from GitHub!) -->
+		<link rel="stylesheet" href="./css/mobiscroll.icons.css" />
+		<link rel="stylesheet" href="./css/mobiscroll.widget.css" />
+		<link rel="stylesheet" href="./css/mobiscroll.widget.jqm.css" />
+		<link rel="stylesheet" href="./css/mobiscroll.scroller.css" />
+		<link rel="stylesheet" href="./css/mobiscroll.scroller.jqm.css" />
+		<link rel="stylesheet" href="./css/mobiscroll.animation.css" />
+
+		<!-- viaJournal special -->
+		<link rel="stylesheet" href="./css/viaJournal_ci.css" />
+		
+		<!-- Awesome Icons (http://www.dotcastle.com/blog/font-awesome-icons-for-jquery-mobile) -->
+		<link rel="stylesheet" href="./css/jqm-font-awesome-usvg-upng.min.css" />
+		
+		<!-- Cordova/Phonegap 3.5.0
+		<script type="text/javascript" src="./js/cordova.min.js"></script>
+		<script type="text/javascript" src="./js/index.js"></script>
+		<script type="text/javascript">
+			app.initialize();
+		</script>		
+		-->
+		
+		<!-- jquery 1.10.2 -->
+		<script type="text/javascript" src="./js/jquery.min.js"></script>
+		
+		<!-- jquery.mobile 1.4.3 -->
+		<script type="text/javascript" src="./js/jquery.mobile.min.js"></script>
+		
+		<!-- MobiScroll 2.12.0 JS (from GitHub!) -->
+		<script type="text/javascript" src="./js/mobiscroll.core.js"></script>
+		<script type="text/javascript" src="./js/mobiscroll.widget.js"></script>
+		<script type="text/javascript" src="./js/mobiscroll.scroller.js"></script>
+		<script type="text/javascript" src="./js/mobiscroll.datetime.js"></script>
+		<script type="text/javascript" src="./js/mobiscroll.widget.jqm.js"></script>
+		<script type="text/javascript" src="./js/mobiscroll.i18n.de.js"></script>
+				
+		<!-- localstorage 2.3 -->	
+		<script type="text/javascript" src="./js/localstoragedb.min.js"></script>
+				
+		<!-- viaJournal individual Scripts -->
+		<script type="text/javascript" src="./js/scripts.min.js"></script>
+		<script type="text/javascript" src="./js/viaJournal.min.js"></script>
+		<script type="text/javascript" src="./js/md5.min.js"></script>
+
+										
+		<script type="text/javascript">
+						
+			///////////
+			// Erst wenn DOM geladen
+			////////////////////////////////////////////		
+			
+			$(document).ready(function() {
+
+				iOSversion();
+				
+				// _________ Verbesserungsmöglichkeiten/Ideen per Mail an uns
+				//	
+				//
+				$('.Email').click(function () {
+	
+					if(!Device.mobile()) {
+						alert('Email wird im Web nicht supported!');
+						return false;	
+					}
+			
+					var toField = ['service@viaLinked.com'],
+						ccField = [], 
+						bccField = [], 
+						subField = 'Feedback: Verbesserungsmöglichkeiten und Ideen',
+						attachment = [];		// Array mit kompletten Pfadangabe zur Datei Bsp: ['./img/icon_info.jpg']
+ 
+					var bodyField =
+						'<style>' +
+							'body { font:12pt/110% Arial; }' +
+						'</style>' +
+							
+						'<p>' + 
+
+						'<b>Nehmen Sie mit mir Kontakt auf:</b></br>- Vor-, Nachname: </br>- Email: </br>- Telefon: </br></br><b>Mein Anliegen: </b></br>' + 
+						'</br></br></br></br></br>' +  
+						
+						'</p>';
+					
+	
+					if(Device.mobile()) {
+		
+						// ______ Plugin GitHub: <https://github.com/katzer/cordova-plugin-email-composer/tree/f4fcee88c47c7ac642cceb27d3d8b31edd26a8f6>
+						//
+						// Attachments - Beispiele
+						// attachments: ['base64:icon.png//iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/...'] als Data URI oder
+						// attachments: [
+   			 	  //      'absolute://Users/sebastian/Library/Application Support/iPhone Simulator/7.0.3/Applications/E7981856-801F-4355-8687-EAACDF8B2A54/HelloCordova.app/../Documents/icon.jpg"'
+						//      'relative://resources/icons/icon.jpg'
+   				 	//      ]
+						window.plugin.email.open({
+							to: toField,
+							cc: ccField,
+							bcc: bccField,
+							subject: subField,
+							body: bodyField,
+							isHtml: true
+						});							
+
+					}
+					
+				});			
+				
+							
+				return false;
+			});
+
+		</script>
+				
+	</head>
+		
+	<body>
+	
+		<div data-role="page" id="HilfePage">
+
+			<div data-role="header" data-theme="a" data-position="fixed" style="opacity:0.9;">
+				<a href="./index.html" rel="external" class="iOS7Header ui-btn-left ui-corner-all" data-transition="slide" data-icon="arrow-l" data-mini="true"><span class="backBtn">Zurück</span></a>
+				<h1>Hilfe</h1>
+			</div>
+			
+			<div role="main" class="ui-content">
+
+					<div class="ui-body ui-body-a ui-corner-all custom-corners text-small">
+						
+						<p class="text">Wir geben Ihnen einen Überblick im Umgang mit viaJournal! Sollten Sie trotzdem weitere Fragen haben, oder uns Ihr Feedback geben wollen, schreiben Sie uns bitte per <a href="#" class="Email">Email</a>.
+						
+						<p class="img01"></p>
+						
+						<p class="text"><img src="./img/screen_de_01.png" class"img01-small" width="135px" align="left" hspace="3" vspace="3" alt="" border="1" style="border-color:#c0c0c0;">
+						Nach dem Start befinden Sie sich im Dashboard. Im Header gibt es 3 Buttons: '?' für Hilfe, 'i' für Impressum und ganz rechts ein Icon für den 'Taschenrechner'.
+						Darunter befinden sich dann in einer 'Auswahl-Übersicht' die entsprechenden Journale oder Kassenbücher. Nach der ersten Installation wird ein Beispieljournal 'Bordkasse...' mitgeliefert. Es soll einen ersten Eindruck über die Möglichkeiten verschaffen.</p>
+
+						<p class="text"><img src="./img/screen_de_02.png" class"img02-small" width="135px" align="right" hspace="3" vspace="3" alt="" border="1" style="border-color:#c0c0c0;">
+						Im unteren Teil finden sich 5 weitere Buttons: '+ Neu' legt neue Kassenbücher an, 'Personen, Gruppen und Ausgaben' sind Stamm-Konten auf die gebucht werden können (näheres weiter unten dazu). Mit '€ Währung' können Wechselkurse definiert werden.</p> 
+						<p class="text">Ein Kassenbuch greift immer auf die 'Stamm-Konten' zurück, weshalb diese auch als Erstes angelegt werden müssen. </br><b>ACHTUNG:</b> Wurden Konten oder Währungsumrechnungen gelöscht, die jedoch in einem Journal vorkommen, kommt es zu FALSCHEN Abrechnungen!</p>
+						
+						<p class="text">Das Prinzip wie Konten angelegt und gemanaged werden ist für alle Stamm-Konten gleich. Am Beispiel von 'Personen' funktioniert das folgendermaßen.
+						<img src="./img/screen_de_03.png" class"img03-small" width="135px" align="left" hspace="3" vspace="3" alt="" border="1" style="border-color:#c0c0c0;">
+						Auch hier zeigt eine Übersicht alle angelegten Personen. Alle Personen die an einem Kassenbuch teilnehmen, müssen hier definiert sein.</p>
+						
+						<p class="text"><img src="./img/screen_de_04.png" class"img04-small" width="125px" align="right" hspace="3" vspace="3" alt="" border="1" style="border-color:#c0c0c0;">
+						Eine Eingabemaske führt zu den entsprechenden Input-Feldern. Felder die mit einem '*'-Stern gekennzeichnet sind (Indexfelder), müssen ausgefüllt werden und sind nach der Anlage des Datensatzes dann nicht mehr veränderbar (der Name: 'Malte Schuster' ist in der Maske rechts ausgegraut). Zu allen Konten können zusätzliche Bankinformationen hinterlegt werden, die für die abschließende Abrechnung genutzt werden können. Mittels der Buttons 'Speichern, Löschen' in der Fußleiste, kann ein Datensatz angelegt oder gelöscht werden.</p>
+	
+						<p class="text"><img src="./img/screen_de_05.png" class"img05-small" width="125px" align="left" hspace="5" vspace="3" alt="" border="1" style="border-color:#c0c0c0;">
+						viaJournal kann auch Währungen umrechnen. Dazu können verschiedene Wecheselkurse angelegt werden. Entscheident ist, dass von einer Währung zu einer anderen Währung mittels eingetragenem 'Kurs' umgerechnet wird. Die Währung 'von' ist dabei immer die 'Referenzwährung', die im jeweiligen Journal angegeben wurde. Die Währung 'nach' kann von Land zu Land unterschiedlich sein. In dem beigefügten Beispiel ist 'EUR' die Referenzwährung und 'USD, HRK, TRY, DKK' die unterschiedlichen Landes Wechselwährungen. Der Kurs gibt das Verhältnis von Referenzwährung zur Landeswährung an.</p>
+						 
+						<p class="text">Nun sind alle Vorbereitungen getroffen, um in einem Kassenbuch zu arbeiten.
+						<img src="./img/screen_de_06.png" class"img06-small" width="125px" align="right" hspace="3" vspace="3" alt="" border="1" style="border-color:#c0c0c0;">
+						Nach Eingabe von 'Journalname' und 'Bemerkung' können über ein Auwahlfeld die entsprechende 'Referenz-Währung', nach der die Abrechnung erfolgen soll, als auch der 'Verwalter', die 'Teilnehmer' und die zu nutzenden 'Konten' die innerhalb des Kassenbuches Anwendung finden eingetragen werden. Ebenfalls muss der 'Zeitraum', für den das Kassenbuch gültig ist, definiert werden.</p>
+						<p class="text">In der Fußleiste gibt es auch hier 4 weitere Buttons. Innerhalb von 'Buchungen' werden die entscheidenden Aktionen vorgenommen. Wiedererum führt eine Auswahl-Übersicht aller bisherigen Buchungen zur Eingabemaske einer entsprechenden Buchung. 
+						<img src="./img/screen_de_07.png" class"img07-small" width="125px" align="left" hspace="3" vspace="3" alt="" border="1" style="border-color:#c0c0c0;">
+						Neben der Eingabe eines 'Namen', des 'Datums' und 'Ortes' der Buchung kann jetzt die eigentliche Buchung vorgenommen werden. 
+						<img src="./img/screen_de_08.png" class"img08-small" width="60px" align="left" hspace="2" vspace="3" alt="" border="1" style="border-color:#c0c0c0;">
+						<p class="text">Dabei kann immer nur von einem 'Personen- oder Gruppen-Konto' auf 'Sach-, Personen- oder Gruppen-Konto' gebucht werden. Buchhalterisch würde es z.B. heißen: von einem 'Personen <b>Soll</b>-Konto' wird ein Betrag auf ein 'Sach <b>Haben</b>-Konto' gebucht.</p> Zum Buchungsbetrag kann hier in einem Auswahlfeld die Währung angegeben werden in der bezahlt wird. Es wird allerdings nur die Währung in der Auswahl angezeigt, die im oben genannten Stammkonto schon eingetragen wurde.</p>
+
+						<p class="text"><b>WICHTIG:</b> Eine Buchung muss immer ausgeglichen sein! Zum Beispiel kann ein 'Bargeld-Gruppenkonto' nicht mehr Soll/Ausgaben als Haben/Einnahmen aufweisen! Was bei viaJournal machbar ist, aber natürlich keinen Sinn macht.</p>
+
+						<p class="text">Weiterhin können einzelne Buchungen über die Buttons in der Fußleiste 'gespeichert' und 'gelöscht' werden.
+
+						<p class="text"><img src="./img/screen_de_09.png" class"img09-small" width="125px" align="right" hspace="2" vspace="3" alt="" border="1" style="border-color:#c0c0c0;">Der Button 'Zurück' im Header führt wieder zum Kassenbuch zurück. Von dort kann über den Button 'Report' eine Abrechnung aller Buchungen für ein Kassenbuch dargestellt werden. Eine Übersicht im oberen Teil zeigt Journaldetails, der Gruppen- und Personenkonten und gibt Aufschluss aller kumulierten Zahlungen und zeigt welchen Personen ggf. zuviel oder zuwenig gezahlt haben.</p>
+						
+						<p class="text">Weiter unten werden die einzelnen Konten nach 'Ausgaben/Soll' und 'Einnahmen/Haben', sowie nach den 'Sachaufwänden' aufgeführt. Interessant ist hierbei sicherlich für die einzelnen Konten die kumulierten Beträge zu sehen. Abschließend werden im unteren Teil noch alle Einzelbuchungen aufgeführt.</p>
+						
+						<p class="text"><img src="./img/screen_de_10.png" class"img10-small" width="125px" align="left" hspace="2" vspace="2" alt="" border="1" style="border-color:#c0c0c0;">
+						Um diesen Report an alle Teilnehmer des Kassenbuchs ggf. mit einer Zahlungsaufforderung weiterzuleiten besteht die Möglichkeit mittels des Buttons 'Mail' im Header, diese Abrechnung per Email zu versenden.</p>
+						 
+					</div>
+
+			</div><!-- /ui-content -->
+			
+		</div><!-- /HilfePage -->
+		
+	</body>
+</html>

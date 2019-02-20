@@ -1,0 +1,121 @@
+/* 
+*  viaLinked_ic.css
+*/
+
+body { 
+	scroll: auto; /* Wegen teilweiser Geister-Scrollbalken */		
+}
+
+/*
+ * Individual Icons
+ */
+
+
+/*
+ * Für Darstellung in Eingabe-/Inputgruppen
+ */
+
+
+/*
+ * Für Darstellung von sehr kleinem Text z.B. in Hilfe
+ */
+.text-small {
+	font-size: 0.7em;
+}
+
+.ui-state-disabled { 
+	opacity:0.8 !important;
+} 
+
+/* Darstellung Header und Content mit abgerundeten Ecken*/ 
+.custom-corners .ui-bar {
+  -webkit-border-top-left-radius: inherit;
+  border-top-left-radius: inherit;
+  -webkit-border-top-right-radius: inherit;
+  border-top-right-radius: inherit;
+}
+.custom-corners .ui-body {
+  border-top-width: 0;
+  -webkit-border-bottom-left-radius: inherit;
+  border-bottom-left-radius: inherit;
+  -webkit-border-bottom-right-radius: inherit;
+  border-bottom-right-radius: inherit;
+}
+
+/* validation */                                  
+.needsfilled { 
+	color: white !important; 
+	background: red !important;
+	text-shadow: none !important; 
+}
+
+/* Kalkulator */ 
+.calc {
+	font-size: 1.2em !important;
+	vertical-align:middle !important;
+	height: 39px !important;
+	margin: 0 !important;
+	padding-top: 0.8em !important;
+	padding-bottom: 0em !important;
+	border: 1 !important;
+}
+
+
+/* Media Queries */
+
+/* iPad - Wenn Viewport mindestens 569 px breit ist */
+@media all and (min-width: 569px) { 
+
+	/* Kalkulator vergrößern */	
+	.calc .ui-btn-inner {
+		font-size: 1.3em !important;
+		vertical-align:middle !important;
+		height: 45px !important;
+		margin: 0 !important;
+		padding-top: 0.9em !important;
+		border: 1 !important;
+	}
+
+	/* Listview Selects */
+	.auswahl {
+		font-size: 1.2em;
+	}	
+
+	.select {
+		font-size: 1.0em;
+	}
+	
+	/* Labels */
+	.ui-mobile label {
+		font-size: 1.0em;
+	}
+
+	.ui-btn-inner {
+		font-size: 1.3em;	
+	}
+	
+	
+	/* Header, Content, Footer */
+	.ui-header, .ui-content, .ui-controlgroup, .ui-footer, .ui-controlgroup {
+    font-size: 1.2em;
+	}
+
+	/* Buttons */
+	.ui-btn {
+		font-size: 0.8em !important;	
+	}
+
+	.ui-select {
+		font-size: 1.0em !important;	
+	}
+
+	.ui-btn-icon-notext {
+		font-size: 1.1em !important;	
+	}	
+
+	.ui-selectmenu-list {
+		font-size: 1.3em !important;	
+	}1
+	
+}
+

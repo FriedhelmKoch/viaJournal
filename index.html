@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+
+<!--
+ * 
+ * Copyright (c) 2015 Friedhelm Koch
+ *
+ * This file is part of viaLinked Project. It is subject to the license terms 
+ * in the LICENSE file found in the top-level directory of this distribution 
+ * and at http://www.viaLinked.com/license.html. 
+ * No part of viaLinked Project, including this file, may be copied, modified, 
+ * propagated, or distributed except according to the terms contained in the 
+ * LICENSE file.
+ *
+ -->
+
+<html lang="de">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="format-detection" content="telephone=no" />
+
+		<!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+		<meta name="viewport" content="width=device-width, height=device-height, minimal-ui user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, target-densitydpi=device-dpi" />
+		<!-- Launcher Title -->
+		<meta name="apple-mobile-web-app-title" content="viaJournal">
+
+		<title>viaJournal</title>
+		
+		<!-- Ohne Browser URL-Zeile iOS-->
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<!-- Ohne Browser URL-Zeile Chrome for Android-->
+		<meta name="mobile-web-app-capable" content="yes" />
+		<!-- Kein Bottom Control mehr -->
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<!-- Title that will shown when website is added to Home Screen -->
+		<meta name="apple-mobile-web-app-title" content="viaJournal" />
+
+		<!-- add to homepage bubble 3.2.3 on iphone, ipad  http://cubiq.org/add-to-home-screen -->
+		<link rel="stylesheet" type="text/css" href="./css/addtohomescreen.css">
+		<script src="./js/addtohomescreen.min.js"></script>
+		<script>
+			addToHomescreen();
+		</script>
+		<!-- /add to homepage bubble on iphone, ipad  -->
+		
+		<!-- Favicon Icon -->
+		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+		
+		<!-- Launch Icons -->
+		<link rel="apple-touch-icon" href="./img/icon.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="./img/icon-76.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="./img/icon-60_at_2x.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="./img/icon-76_at_2x.png">
+		
+		<!-- Startup Splash (640 x 1136 iPhone 5s/5c) -->
+		<link rel="apple-touch-startup-image" href="./img/Default-568h_at_2x~iphone.png">
+				
+		<!-- jquery.mobile 1.4.5 custom styles and icons -->
+		<link rel="stylesheet" href="./css/jquery.mobile.theme.viaJournal.min.css" />		
+		<link rel="stylesheet" href="./css/jquery.mobile.icons.min.css" />
+		<link rel="stylesheet" href="./css/jquery.mobile.structure.min.css" />
+
+		<!-- MobiScroll 2.12.0 CSS (from GitHub!) -->
+		<link rel="stylesheet" href="./css/mobiscroll.icons.css" />
+		<link rel="stylesheet" href="./css/mobiscroll.widget.css" />
+		<link rel="stylesheet" href="./css/mobiscroll.widget.jqm.css" />
+		<link rel="stylesheet" href="./css/mobiscroll.scroller.css" />
+		<link rel="stylesheet" href="./css/mobiscroll.scroller.jqm.css" />
+		<link rel="stylesheet" href="./css/mobiscroll.animation.css" />
+
+		<!-- viaJournal special -->
+		<link rel="stylesheet" href="./css/viaJournal_ci.css" />
+		
+		<!-- Awesome Icons (http://www.dotcastle.com/blog/font-awesome-icons-for-jquery-mobile) -->
+		<link rel="stylesheet" href="./css/jqm-font-awesome-usvg-upng.min.css" />
+		
+		<!-- Cordova/Phonegap 3.8.0
+		<script type="text/javascript" src="./js/cordova.min.js"></script>
+		<script type="text/javascript" src="./js/index.js"></script>
+		<script type="text/javascript">
+			app.initialize();
+		</script>
+		-->
+		
+		<!-- jquery 1.10.2 -->
+		<script type="text/javascript" src="./js/jquery.min.js"></script>
+		
+		<!-- jquery.mobile 1.4.5 -->
+		<script type="text/javascript" src="./js/jquery.mobile.min.js"></script>
+		
+		<!-- MobiScroll 2.12.0 JS (from GitHub!) -->
+		<script type="text/javascript" src="./js/mobiscroll.core.js"></script>
+		<script type="text/javascript" src="./js/mobiscroll.widget.js"></script>
+		<script type="text/javascript" src="./js/mobiscroll.scroller.js"></script>
+		<script type="text/javascript" src="./js/mobiscroll.datetime.js"></script>
+		<script type="text/javascript" src="./js/mobiscroll.widget.jqm.js"></script>
+		<script type="text/javascript" src="./js/mobiscroll.i18n.de.js"></script>
+				
+		<!-- localstorage 2.3.3 -->	
+		<script type="text/javascript" src="./js/localstoragedb.min.js"></script>
+				
+		<!-- viaJournal individual Scripts -->
+		<script type="text/javascript" src="./js/scripts.min.js"></script>
+		<script type="text/javascript" src="./js/viaJournal.min.js"></script>
+		<script type="text/javascript" src="./js/md5.min.js"></script>
+
+					
+		<script type="text/javascript">
+					
+			///////////
+			// Standard Javascript Funktionen
+			////////////////////////////////////////////	
+	
+			// Globale Variablen
+			var viaJournalDB_085,		// Datenbank in der Version 0.8.5
+				recJournal;						// Hier werden Datenbankrecords gespeichert
+						
+			///////////
+			// Erst wenn DOM geladen
+			////////////////////////////////////////////		
+			
+			$(document).ready(function() {
+
+				iOSversion();					// Header für iOS7 anpassen
+				initDB();							// Initialisierte Datenbank öffnen
+				showJournal();				// Alle gespeicherten Journale in Listview anzeigen 
+
+				// _________ Journale editieren: Löschen / Speichern
+				//				
+				$('.linkJournalDetail').bind('click', function() {
+					editJournalDetail($(this).attr('rec'));				// Laufvariable aus "rec" auslesen
+				});
+				
+				// _________ Löschen von gespeicherten Journalen aus der Datenbank
+				//
+				$('.delJournal').bind('click', function() {
+					deleteJournal($('#JournalDetailPage').attr('rec'));	// Hinterlegte Record# einlesen
+				});
+				
+				// _________ Speichern/Update von Journalen in die Datenbank
+				//
+				$('.saveJournal').bind('click', function() {
+					saveJournal($('#JournalDetailPage').attr('rec'));
+				});
+				
+				// _________ Anlegen von neuen Journalen in die Datenbank
+				//
+				$('.addJournal').bind('click', function() {
+					addJournal();
+				});
+				
+				// _________ Buchungen
+				//
+				$('#buchungen').bind('click', function() {
+					// MD-5 Code als URL übertragen
+					window.location.href='./transaktionen.html?' + recJournal[$('#JournalDetailPage').attr('rec')].code;
+				});
+				
+				// _________ Reports
+				//
+				$('#reports').bind('click', function() {
+					window.location.href='./reports.html?' + recJournal[$('#JournalDetailPage').attr('rec')].code;
+				});
+					
+				return false;
+			});
+
+		</script>
+				
+	</head>
+		
+	<body>
+	
+		<div data-role="page" id="JournalPage">
+		
+			<div data-role="header" data-theme="a" data-position="fixed" style="opacity:0.9;">
+				<div data-role="controlgroup" data-type="horizontal" class="iOS7Header ui-btn ui-btn-left ui-corner-all ui-shadow">
+					<a href="./hilfe.html" rel="external" class="ui-btn ui-corner-all ui-icon-fa-question ui-btn-icon-notext" title="Hilfe">Icon only</a>		
+					<a href="./impressum.html" rel="external" class="ui-btn ui-corner-all ui-icon-fa-info ui-btn-icon-notext" title="Impressum">Icon only</a>
+				</div>
+				<h1>Dashboard</h1>
+					<!-- <a href="./einstellungen.html" rel="external" class="iOS7Header ui-btn ui-btn-right ui-corner-all ui-icon-fa-gears ui-btn-icon-notext" data-transition="slide" data-mini="true"><span class="prefBtn">Einstellungen</span></a> -->
+					<a href="./calc.html" rel="external" class="iOS7Header ui-btn ui-btn-right ui-corner-all ui-icon-fa-building-o ui-btn-icon-notext" data-transition="slide" data-mini="true"><span class="calcBtn">Calc</span></a>
+			</div>
+			
+			<div role="main" class="ui-content">
+			
+				<ul id="archivJournal" class="auswahl" data-role="listview" data-inset="true" data-theme="c">
+				</ul>
+				
+				<div id="message"></div>
+
+			</div>
+			
+			<div data-role="footer" data-position="fixed" data-theme="b" style="overflow:hidden;opacity:0.9;">
+		    <div data-role="navbar" data-iconpos="top">
+					<ul>
+						<li><a href="#" class="addJournal ui-btn" data-icon="plus">Neu</a></li>
+						<li><a href="./personen.html" rel="external" class="ui-btn" data-icon="fa-male">Personen</a></li>
+						<li><a href="./fonds.html" rel="external" class="ui-btn" data-icon="fa-cubes">Gruppen</a></li>
+						<li><a href="./sachen.html" rel="external" class="ui-btn" data-icon="fa-shopping-cart">Ausgaben</a></li>
+						<li><a href="./wechselkurse.html" rel="external" class="ui-btn" data-icon="fa-euro">Währung</a></li>	
+					</ul>
+    		</div><!-- /navbar -->
+			</div>
+			
+		</div><!-- /JournalPage -->
+		
+
+		<div data-role="page" id="JournalDetailPage">
+				
+			<div data-role="header" data-theme="a" data-position="fixed" style="opacity:0.9;">
+				<h1>Journale</h1>
+				<a href="./index.html" rel="external" class="iOS7Header ui-btn-left ui-corner-all" data-transition="slide" data-icon="arrow-l" data-mini="true"><span class="backBtn">Zurück</span></a>
+			</div>
+			
+			<div role="main" class="ui-content">
+			
+				<div id="JournalDetail">
+				
+					<div class="ui-corner-all custom-corners">
+					
+						<div class="ui-bar ui-bar-a">
+							<h3>Journale / Kassenbücher</h3>
+						</div>
+
+						<div class="ui-body ui-body-a">
+							<label for="journalName">Journal-Name:<sup>*</sup></label>
+    					<input name="journalName" id="journalName" placeholder="Name des Journals?" value="" type="text" maxlength="50" />
+
+							<label for="journalBemerkung">Bemerkung:</label>
+    					<input name="journalBemerkung" id="journalBemerkung" placeholder="Bemerkung?" value="" type="text" maxlength="50" />
+
+							<fieldset class="ui-grid-a">
+    						<div class="ui-block-a" style="width:50%">							
+									<label for="journalCurrency">Abrechnung in Währung:</label>
+									<select class="select" name="journalCurrency" id="journalCurrency" data-native-menu="false" data-mini="true" data-theme="c">
+									</select>
+								</div>	
+								<div class="ui-block-b" style="width:50%">
+									<label for="journalLeader">Wer verwaltet das Journal:<sup>*</sup></label>
+									<select class="select" name="journalLeader" id="journalLeader" data-native-menu="false" data-mini="true" data-theme="c">
+									</select>
+								</div>
+							</fieldset>	
+
+							<fieldset class="ui-grid-a">
+								<div class="ui-block-b" style="width:100%">
+									<label for="journalPersonen">Wer nimmt am Journal teil:<sup>*</sup></label>
+									<select class="select" name="journalPersonen" id="journalPersonen" data-native-menu="false" data-mini="true" multiple="multiple" data-theme="c">
+									</select>
+								</div>
+							</fieldset>	
+
+							<fieldset class="ui-grid-a">
+								<div class="ui-block-b" style="width:100%">
+									<label for="journalKonten">Auf welche Konten wird gebucht:<sup>*</sup></label>
+									<select class="select" name="journalKonten" id="journalKonten" data-native-menu="false" data-mini="true" multiple="multiple" data-theme="c">
+									</select>
+								</div>
+							</fieldset>	
+																					
+							<fieldset class="ui-grid-a">
+    						<div class="ui-block-a" style="width:50%">
+									<label for="journalDatumVon">Zeitraum von:<sup>*</sup></label>
+									<input name="journalDatumVon" id="journalDatumVon" class="wheelDatum" placeholder="Datum von?" value="" type="text" maxlength="10" />
+								</div>
+    						<div class="ui-block-b" style="width:50%">
+									<label for="journalDatumBis">bis:<sup>*</sup></label>
+									<input name="journalDatumBis" id="journalDatumBis" class="wheelDatum" placeholder="Datum bis?" value="" type="text" maxlength="10" />
+								</div>
+							</fieldset>
+										
+							<sup>*</sup><span style="font-size:0.8em">(Pflichtfelder müssen ausgefüllt werden und können teilweise nachträglich nicht geändert werden!)<br/><br/></span>
+																																									
+						</div>
+						
+					</div>
+											
+				</div>
+
+			</div><!-- /main -->
+
+			
+			<!-- popup - Löschen eines Eintrages -->	
+			<div data-role="popup" data-transition="slidedown" data-position-to="window" data-dismissible="true" id="delConfirm" data-theme="a" data-overlay-theme="a">
+				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<!-- header wird ersetzt, da ansonsten der auto back-btn eingesetzt wird -->	
+				<div class="ui-bar ui-bar-a ui-corner-top"> 
+					<center><h3 class="delpopHeader">Eintrag löschen?</h3></center>
+				</div>
+				<div data-role="content" data-theme="d" class="ui-corner-bottom ui-content ui-hide-label" style="padding:10px 20px;">				
+					<h3><center id="delItem"></center></h3>
+					<p><center class="delpopMessage">ACHTUNG: Das Journal und alle dazugehörenden Buchungen werden unwiderruflich gelöscht!</center></p>
+					<a href="#" id="delItemBtn" data-role="button" data-icon="fa-trash-o" data-mini="true" data-theme="c"><span class="delBtn blink">Löschen</span></a>
+				</div>
+			</div><!-- /popup -->
+			
+
+			<!-- popup successfully saved/updated -->
+			<div data-role="popup" data-transition="slidedown" data-dismissible="true" data-position-to="window" id="popupSuccess" data-theme="a" data-overlay-theme="a">
+				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<p class="popSuccess" style="white-space:normal;"></br>Daten erfolgreich gespeichert!</p>
+			</div><!-- /popup -->
+
+				
+			<!-- popup - Prüfen auf doppelten Eintrag -->	
+			<div data-role="popup" data-transition="slidedown" data-dismissible="true" data-position-to="window" data-dismissible="true" id="doubleCheck" data-theme="a" data-overlay-theme="a">
+				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<!-- header wird ersetzt, da ansonsten der auto back-btn eingesetzt wird -->	
+				<div class="ui-bar ui-bar-a ui-corner-top"> 
+					<center><h3 class="doubleCheckHeader">Doppelter Eintrag!</h3></center>
+				</div>
+				<div data-role="content" data-theme="d" class="ui-corner-bottom ui-content ui-hide-label" style="padding:10px 20px;">				
+					<h3><center id="doubleCheckItem"></center></h3>
+					<p><center class="doubleCheckMessage">Eintrag wird überschrieben!</center></p>
+					<a href="#" id="doubleCheckBtn" data-role="button" data-icon="fa-copy" data-mini="true" data-theme="c"><span class="doubleCheckBtnText blink">Überschreiben</span></a>
+				</div>
+			</div><!-- /popup -->
+
+
+			<!-- popup - Eingabe Validierung -->	
+			<div data-role="popup" id="validation" data-dismissible="true" data-position-to="window" data-theme="a" data-overlay-theme="a">
+				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<p class="popValidation" style="white-space:normal;"></br>...Validation error!</p>
+			</div><!-- /popup -->
+
+										
+			<div data-role="footer" data-position="fixed" data-theme="b" style="overflow:hidden;opacity:0.9;">
+		    <div data-role="navbar" class="navbarFooter_modify" data-iconpos="top">
+					<ul>
+            <li><a href="#" class="saveJournal" data-icon="fa-save">Speichern</a></li>
+            <li><a href="#" class="delJournal" data-icon="fa-trash-o">Löschen</a></li>
+
+						<li><a href="#" id="buchungen" data-icon="fa-folder-open-o">Buchungen</a></li>
+						<li><a href="#" id="reports" data-icon="fa-bar-chart-o">Report</a></li>
+      	  </ul>
+    		</div><!-- /navbar modify -->
+				<div data-role="navbar" class="navbarFooter_add" data-iconpos="left" style="display:none">
+    	    <ul>
+            <li><a href="#" class="saveJournal" data-icon="fa-save">Speichern</a></li>
+      	  </ul>				
+					
+    		</div><!-- /navbar add -->
+			</div>
+			
+		</div><!-- /JournalDetailPage -->
+	</body>
+</html>
